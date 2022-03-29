@@ -157,10 +157,8 @@ function escapeJsonString($value)
 
     const renameFile = (filename) => {
         let iniFileName = `<?php echo escapeJsonString($location) ?>\\${filename}`;
-
         const newName = prompt("Enter the New name");
         let newNameFile = `<?php echo escapeJsonString($location) ?>\\${newName}`;
-
         $.post('rename.php', {
             location: iniFileName,
             newName: newNameFile
