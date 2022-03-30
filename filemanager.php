@@ -11,6 +11,13 @@ if (!isset($_SESSION['email'])) {
     $dirs = scandir($location);
     $location = str_replace('\\', '/', $location);
 }
+if($_SERVER['REQUEST_METHOD'] == 'POST'){
+    if(isset($_FILES['Uploaded'])){
+        for ($i=0; $i < count($_FILES['Uploaded']['name']); $i++) {
+            move_uploaded_file($_FILES['Uploaded']['tmp_name'][$i], $location . '/' . $_FILES['Uploaded']['name'][$i]);
+        }
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -46,6 +53,15 @@ if (!isset($_SESSION['email'])) {
                     <button onclick="createFolder()" class="bg-pink-500 text-white active:bg-pink-600 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150" type="button">
                         Create Folder
                     </button>
+                </a>
+
+                <a class="mr-5 cursor-pointer">
+                    <form method="post" enctype="multipart/form-data">
+                        <input class="bg-blue-500 text-white active:bg-blue-600 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150" type="file" class="h-auto w-auto mb-4 opacity-0" name="Uploaded[]" id="Uploaded" multiple value="File Upload">
+                        <button type="submit" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center">
+                            <span>Upload</span>
+                        </button>
+                    </form>
                 </a>
                 <a href="./logout.php" class="mr-5 cursor-pointer">Logout</a>
             </nav>
@@ -86,14 +102,14 @@ if (!isset($_SESSION['email'])) {
                         if (is_dir($location . '/' . $dirs[$i])) {
                             echo "
                             <tr class='bg-white border-b dark:bg-gray-800 dark:border-gray-700'>
-                            <th scope='row' class='px-6 flex items-center py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap'><img style='height: 51px;' src='https://i.pinimg.com/474x/fe/dc/ee/fedceef43b1e8c83b404245a6686bafe.jpg' />&nbsp;&nbsp;<a href='./filemanager.php?location=".$location.'/'.$dirs[$i]."'>" . $dirs[$i] . "</a></th>
+                            <th scope='row' class='px-6 flex items-center py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap'><img style='height: 51px;' src='https://i.pinimg.com/474x/fe/dc/ee/fedceef43b1e8c83b404245a6686bafe.jpg' />&nbsp;&nbsp;<a href='./filemanager.php?location=" . $location . '/' . $dirs[$i] . "'>" . $dirs[$i] . "</a></th>
                             <td class='px-6 py-4'>
                                 <button type='button' disabled class='text-white opacity-20 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-2 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800'>Edit</button>
                             </td>
                             
                             
                             <td class='px-6 py-4'>
-                                <a href='./delete.php?type=folder&location=" . $location .'/'. $dirs[$i]."' type='button' class='focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-3 py-2 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900'>Delete</a>
+                                <a href='./delete.php?type=folder&location=" . $location . '/' . $dirs[$i] . "' type='button' class='focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-3 py-2 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900'>Delete</a>
                             </td>
                             
                             <td class='px-6 py-4'>
