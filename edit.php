@@ -1,14 +1,15 @@
 <?php
-session_start();
-if (!isset($_SESSION['email'])) {
-    header("Location: index.php");
-}
-else {
-    $file_name = $_GET['file_name'];
-    $file_name = str_replace('\\', '/', $file_name);
-    if(!file_exists($file_name)){
-        header('Location: filemanager.php?location=' . __DIR__);
+include './params.php';
+if($auth){
+    session_start();
+    if (!isset($_SESSION['email'])) {
+        header("Location: index.php");
     }
+}
+$file_name = $_GET['file_name'];
+$file_name = str_replace('\\', '/', $file_name);
+if(!file_exists($file_name)){
+    header('Location: filemanager.php?location=' . __DIR__);
 }
 
 if($_SERVER["REQUEST_METHOD"] == "POST"){

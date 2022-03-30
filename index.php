@@ -1,4 +1,6 @@
 <?php
+include './params.php';
+$location = str_replace('\\', '/', __DIR__);
 if($_SERVER["REQUEST_METHOD"] == 'POST'){
     $email = $_POST['email'];
     $password = $_POST['password'];
@@ -6,9 +8,12 @@ if($_SERVER["REQUEST_METHOD"] == 'POST'){
     if($email == "krrish@mail2webmaster.com" && $password == "admin"){
         session_start();
         $_SESSION['email'] = $email;
-        $location = str_replace('\\', '/', __DIR__);
         header('Location: filemanager.php?location=' . $location);
     }
+}
+
+if(!$auth){
+    header('Location: filemanager.php?location=' . $location);
 }
 
 ?>

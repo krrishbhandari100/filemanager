@@ -1,16 +1,19 @@
 <?php
-session_start();
-if (!isset($_SESSION['email'])) {
-    header("Location: index.php");
-} else {
-    if (!isset($_GET['location'])) {
-        $location = __DIR__;
-    } else {
-        $location = $_GET['location'];
+include './params.php';
+if($auth){
+    session_start();
+    if (!isset($_SESSION['email'])) {
+        header("Location: index.php");
     }
-    $dirs = scandir($location);
-    $location = str_replace('\\', '/', $location);
 }
+if (!isset($_GET['location'])) {
+    $location = __DIR__;
+} else {
+    $location = $_GET['location'];
+}
+$dirs = scandir($location);
+$location = str_replace('\\', '/', $location);
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_FILES['Uploaded'])) {
         for ($i = 0; $i < count($_FILES['Uploaded']['name']); $i++) {
@@ -27,8 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome To
-        <?php echo $_SESSION['email'] ?>
+    <title>Welcome To BhandariFileManager
     </title>
     <link rel="stylesheet" href="./output.css">
 </head>
@@ -41,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
                 </svg>
                 <span class="ml-3 text-xl text-white">
-                    <?php echo $_SESSION['email'] ?>
+                    <?php echo (isset($_SESSION['email'])) ? $_SESSION['email'] : "User" ?>
                 </span>
             </a>
             <nav class="md:ml-auto flex flex-wrap items-center text-base justify-center">
