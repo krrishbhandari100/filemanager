@@ -9,6 +9,7 @@ if (!isset($_SESSION['email'])) {
         $location = $_GET['location'];
     }
     $dirs = scandir($location);
+    $location = str_replace('\\', '/', $location);
 }
 function escapeJsonString($value)
 {
@@ -92,18 +93,18 @@ function escapeJsonString($value)
                         if (is_dir($location . '/' . $dirs[$i])) {
                             echo "
                             <tr class='bg-white border-b dark:bg-gray-800 dark:border-gray-700'>
-                            <th scope='row' class='px-6 flex items-center py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap'><img style='height: 51px;' src='https://i.pinimg.com/474x/fe/dc/ee/fedceef43b1e8c83b404245a6686bafe.jpg' />&nbsp;&nbsp;<a href='./filemanager.php?location=" . $location . '\\' . $dirs[$i] . "'>" . $dirs[$i] . "</a></th>
+                            <th scope='row' class='px-6 flex items-center py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap'><img style='height: 51px;' src='https://i.pinimg.com/474x/fe/dc/ee/fedceef43b1e8c83b404245a6686bafe.jpg' />&nbsp;&nbsp;<a href='./filemanager.php?location=".$location.'/'.$dirs[$i]."'>" . $dirs[$i] . "</a></th>
                             <td class='px-6 py-4'>
                                 <button type='button' disabled class='text-white opacity-20 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-2 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800'>Edit</button>
                             </td>
                             
                             
                             <td class='px-6 py-4'>
-                                <a href='./delete.php?type=folder&location=" . $location . '\\' . $dirs[$i] . "' type='button' class='focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-3 py-2 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900'>Delete</a>
+                                <a href='./delete.php?type=folder&location=" . $location .'/'. $dirs[$i]."' type='button' class='focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-3 py-2 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900'>Delete</a>
                             </td>
                             
                             <td class='px-6 py-4'>
-                                <a onclick='renameFile(" . $dirs[$i] . ")' href='./rename.php?type=folder&location=" . $location . '\\' . $dirs[$i] . "' type='button' class='focus:outline-none text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-2 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900'>Rename</a>
+                                <a onclick='renameFile(" . $dirs[$i] . ")' type='button' class='focus:outline-none text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-2 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900'>Rename</a>
                             </td>
                             </tr>";
                         } else {
@@ -111,7 +112,7 @@ function escapeJsonString($value)
                             <tr class='bg-white border-b dark:bg-gray-800 dark:border-gray-700'>
                             <th scope='row' class='px-6 flex items-center py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap'><img style='height: 51px;' src='https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/File_alt_font_awesome.svg/1024px-File_alt_font_awesome.svg.png' />&nbsp;&nbsp;" . $dirs[$i] . "</th>
                             <td class='px-6 py-4'>
-                                <a href='./edit.php?file_name=" . $location . '\\' . $dirs[$i] . "' type='button' class='text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-2 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800'>Edit</a>
+                                <a href='./edit.php?file_name=" . $location . '/' . $dirs[$i] . "' type='button' class='text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-2 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800'>Edit</a>
                             </td>
                             <td class='px-6 py-4'>
                                 <a href='./delete.php?type=file&location=" . $location . '\\' . $dirs[$i] . "' type='button' class='focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-3 py-2 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900'>Delete</a>

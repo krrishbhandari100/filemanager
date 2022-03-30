@@ -6,7 +6,8 @@ if($_SERVER["REQUEST_METHOD"] == 'POST'){
     if($email == "krrish@mail2webmaster.com" && $password == "admin"){
         session_start();
         $_SESSION['email'] = $email;
-        header('Location: filemanager.php?location=' . __DIR__);
+        $location = str_replace('\\', '/', __DIR__);
+        header('Location: filemanager.php?location=' . $location);
     }
 }
 
