@@ -134,7 +134,7 @@ if (!isset($_SESSION['email'])) {
             type: 'file',
             location: location
         }, (data, status) => {
-            // window.location.reload();
+            window.location.reload();
             console.log(data)
         })
     }
