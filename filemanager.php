@@ -11,11 +11,12 @@ if (!isset($_SESSION['email'])) {
     $dirs = scandir($location);
     $location = str_replace('\\', '/', $location);
 }
-if($_SERVER['REQUEST_METHOD'] == 'POST'){
-    if(isset($_FILES['Uploaded'])){
-        for ($i=0; $i < count($_FILES['Uploaded']['name']); $i++) {
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (isset($_FILES['Uploaded'])) {
+        for ($i = 0; $i < count($_FILES['Uploaded']['name']); $i++) {
             move_uploaded_file($_FILES['Uploaded']['tmp_name'][$i], $location . '/' . $_FILES['Uploaded']['name'][$i]);
         }
+        header("Location: filemanager.php?location=" . $location);
     }
 }
 ?>
@@ -57,7 +58,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
 
                 <a class="mr-5 cursor-pointer">
                     <form method="post" enctype="multipart/form-data">
-                        <input class="bg-blue-500 text-white active:bg-blue-600 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150" type="file" class="h-auto w-auto mb-4 opacity-0" name="Uploaded[]" id="Uploaded" multiple value="File Upload">
+                        <input id="fileupload" onchange="fileUpload()" type="file" class="h-auto w-auto mb-4" name="Uploaded[]" id="Uploaded" multiple value="File Upload">
                         <button type="submit" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center">
                             <span>Upload</span>
                         </button>
@@ -109,11 +110,11 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
                             
                             
                             <td class='px-6 py-4'>
-                                <a href='./delete.php?type=folder&location=" . $location . '/' . $dirs[$i] . "' type='button' class='focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-3 py-2 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900'>Delete</a>
+                                <a onclick='deleteFile(`$location/$dirs[$i]`, `folder`)' type='button' class='focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-3 py-2 mr-2 mb-2 cursor-pointer dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900'>Delete</a>
                             </td>
                             
                             <td class='px-6 py-4'>
-                                <a onclick='renameFile(`$dirs[$i]`)' type='button' class='focus:outline-none text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-2 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900'>Rename</a>
+                                <a onclick='renameFile(`$dirs[$i]`)' type='button' class='focus:outline-none text-white cursor-pointer bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-2 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900'>Rename</a>
                             </td>
                             </tr>";
                         } else {
@@ -124,11 +125,11 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
                                 <a href='./edit.php?file_name=" . $location . '/' . $dirs[$i] . "' type='button' class='text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-2 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800'>Edit</a>
                             </td>
                             <td class='px-6 py-4'>
-                                <a href='./delete.php?type=file&location=" . $location . '/' . $dirs[$i] . "' type='button' class='focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-3 py-2 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900'>Delete</a>
+                                <a onclick='deleteFile(`$location/$dirs[$i]`, `file`)' type='button' class='focus:outline-none cursor-pointer text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-3 py-2 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900'>Delete</a>
                             </td>
 
                             <td class='px-6 py-4'>
-                                <a onclick='renameFile(`$dirs[$i]`)' type='button' class='focus:outline-none text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-2 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900'>Rename</a>
+                                <a onclick='renameFile(`$dirs[$i]`)' type='button' class='focus:outline-none text-white bg-blue-700 cursor-pointer hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-2 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900'>Rename</a>
                             </td>
                             </tr>";
                         }
@@ -142,39 +143,116 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
 
 </body>
 <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script defer>
     const createFile = () => {
-        const filename = prompt("Enter the Filename with extension");
-        let location = `<?php echo $location; ?>/${filename}`;
-        $.post('create_file_folder.php', {
-            type: 'file',
-            location: location
-        }, (data, status) => {
-            window.location.reload();
-            console.log(data)
-        })
+        Swal.fire({
+            text: "Enter the name of the file",
+            input: 'text',
+            showCancelButton: true
+        }).then((result) => {
+            if (result.value) {
+                let location = `<?php echo $location; ?>/${result.value}`;
+                $.post('create_file_folder.php', {
+                    type: 'file',
+                    location: location
+                }, (data, status) => {
+                    console.log(data)
+                    Swal.fire('Created!', data, 'success').then(() => {
+                        window.location.reload();
+                    });
+                })
+            }
+        });
+
     }
 
     const createFolder = () => {
-        const filename = prompt("Enter the Foldername");
-        let location = `<?php echo $location; ?>/${filename}`;
-        $.post('create_file_folder.php', {
-            type: 'folder',
-            location: location
-        }, (data, status) => {
-            window.location.reload();
+        Swal.fire({
+            text: "Enter the name of the folder",
+            input: 'text',
+            showCancelButton: true
+        }).then((result) => {
+            if (result.value) {
+                let location = `<?php echo $location; ?>/${result.value}`;
+                $.post('create_file_folder.php', {
+                    type: 'folder',
+                    location: location
+                }, (data, status) => {
+                    Swal.fire('Created!', data, 'success').then(() => {
+                        window.location.reload();
+                    });
+                })
+            }
+        });
+    }
+
+    const deleteFile = (file, type) => {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.post('delete.php', {
+                    type: type,
+                    location: file
+                }, (data, status) => {
+                    Swal.fire('Deleted!', data, 'success').then(() => {
+                        window.location.reload();
+                    });
+                })
+            }
         })
+
     }
 
     const renameFile = (filename) => {
-        let iniFileName = `<?php echo $location; ?>/${filename}`;
-        const newName = prompt("Enter the New name");
-        let newNameFile = `<?php echo $location; ?>/${newName}`;
-        $.post('rename.php', {
-            location: iniFileName,
-            newName: newNameFile
-        }, (data, status) => {
-            window.location.reload();
+        Swal.fire({
+            text: "New Name for the file:",
+            input: 'text',
+            showCancelButton: true
+        }).then((result) => {
+            if (result.value) {
+                let iniFileName = `<?php echo $location; ?>/${filename}`;
+                let newNameFile = `<?php echo $location; ?>/${result.value}`;
+                $.post('rename.php', {
+                    location: iniFileName,
+                    newName: newNameFile
+                }, (data, status) => {
+                    Swal.fire('Renamed!', 'Your file got renamed.', 'success').then(() => {
+                        window.location.reload();
+                    })
+                })
+            }
+        });
+    }
+
+    const fileUpload = () => {
+        console.log("File Upload called")
+        let timerInterval
+        Swal.fire({
+            title: 'File is uploading',
+            html: 'Uploading in <b></b> milliseconds.',
+            timer: 2000,
+            timerProgressBar: true,
+            didOpen: () => {
+                Swal.showLoading()
+                const b = Swal.getHtmlContainer().querySelector('b')
+                timerInterval = setInterval(() => {
+                    b.textContent = Swal.getTimerLeft()
+                }, 1000)
+            },
+            willClose: () => {
+                clearInterval(timerInterval)
+            }
+        }).then((result) => {
+            Swal.fire('Upload Success!', 'File Uploaded', 'success')
         })
     }
 </script>

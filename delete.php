@@ -21,24 +21,27 @@ function delete_directory($dirname) {
 if (!isset($_SESSION['email'])) {
     header("Location: index.php");
 } else {
-    $location = $_GET['location'];
-    $type = $_GET['type'];
-    echo is_file($location);
+    $location = $_POST['location'];
+    $type = $_POST['type'];
+    
     if($type == "file" && is_file($location)){
-        unlink($location);
-        header("Location: filemanager.php?location="  . dirname($location));
-        echo "File is deleted";
+        if(unlink($location)){
+            echo "File is deleted";
+        }
+        else {
+            echo "File could not be deleted";
+        }
     }
 
     else if($type == "folder" && is_dir($location)) {
         if(delete_directory($location)){
             echo "Folder is deleted successfully";
-            header("Location: filemanager.php?location="  . dirname($location));
         }
         else {
             echo "Folder could not be deleted";
         }
     }
+    
     else {
         echo "Some Problem with your command";
     }
