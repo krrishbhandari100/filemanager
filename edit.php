@@ -1,24 +1,19 @@
 <?php
-function escapeJsonString($value){
-    $escapers = array("\\", "/", "\"", "\n", "\r", "\t", "\x08", "\x0c");
-    $replacements = array("\\\\", "\\/", "\\\"", "\\n", "\\r", "\\t", "\\f", "\\b");
-    $result = str_replace($escapers, $replacements, $value);
-    return $result;
-}
 session_start();
 if (!isset($_SESSION['email'])) {
     header("Location: index.php");
 }
 else {
     $file_name = $_GET['file_name'];
-    if(!file_exists(escapeJsonString($file_name))){
+    $file_name = str_replace('\\', '/', $file_name);
+    if(!file_exists($file_name)){
         header('Location: filemanager.php?location=' . __DIR__);
     }
 }
 
 if($_SERVER["REQUEST_METHOD"] == "POST"){
     $fileContents = $_POST['contents'];
-    echo file_put_contents(escapeJsonString($file_name), $fileContents);
+    echo file_put_contents($file_name, $fileContents);
     header('Location: filemanager.php?location=' . dirname($file_name));
 
 }
@@ -35,7 +30,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 <body>
     <center>
         <form method="post">
-            <textarea id="contents" name="contents" class="h-[90vh] w-[90vw] border border-black"><?php echo file_get_contents(escapeJsonString($file_name)); ?></textarea>
+            <textarea id="contents" name="contents" class="h-[90vh] w-[90vw] border border-black"><?php echo file_get_contents($file_name); ?></textarea>
             <br>
             <button type='submit' class='text-white mt-4 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-2 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800'>Edit</button>
         </form>

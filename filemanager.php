@@ -11,13 +11,6 @@ if (!isset($_SESSION['email'])) {
     $dirs = scandir($location);
     $location = str_replace('\\', '/', $location);
 }
-function escapeJsonString($value)
-{
-    $escapers = array("\\", "/", "\"", "\n", "\r", "\t", "\x08", "\x0c");
-    $replacements = array("\\\\", "\\/", "\\\"", "\\n", "\\r", "\\t", "\\f", "\\b");
-    $result = str_replace($escapers, $replacements, $value);
-    return $result;
-}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -115,7 +108,7 @@ function escapeJsonString($value)
                                 <a href='./edit.php?file_name=" . $location . '/' . $dirs[$i] . "' type='button' class='text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-2 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800'>Edit</a>
                             </td>
                             <td class='px-6 py-4'>
-                                <a href='./delete.php?type=file&location=" . $location . '\\' . $dirs[$i] . "' type='button' class='focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-3 py-2 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900'>Delete</a>
+                                <a href='./delete.php?type=file&location=" . $location . '/' . $dirs[$i] . "' type='button' class='focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-3 py-2 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900'>Delete</a>
                             </td>
 
                             <td class='px-6 py-4'>
@@ -136,18 +129,19 @@ function escapeJsonString($value)
 <script defer>
     const createFile = () => {
         const filename = prompt("Enter the Filename with extension");
-        let location = `<?php echo escapeJsonString($location) ?>\\${filename}`;
+        let location = `<?php echo $location; ?>/${filename}`;
         $.post('create_file_folder.php', {
             type: 'file',
             location: location
         }, (data, status) => {
-            window.location.reload();
+            // window.location.reload();
+            console.log(data)
         })
     }
 
     const createFolder = () => {
         const filename = prompt("Enter the Foldername");
-        let location = `<?php echo escapeJsonString($location) ?>\\${filename}`;
+        let location = `<?php echo $location; ?>/${filename}`;
         $.post('create_file_folder.php', {
             type: 'folder',
             location: location
@@ -157,9 +151,9 @@ function escapeJsonString($value)
     }
 
     const renameFile = (filename) => {
-        let iniFileName = `<?php echo escapeJsonString($location) ?>\\${filename}`;
+        let iniFileName = `<?php echo $location; ?>/${filename}`;
         const newName = prompt("Enter the New name");
-        let newNameFile = `<?php echo escapeJsonString($location) ?>\\${newName}`;
+        let newNameFile = `<?php echo $location; ?>/${newName}`;
         $.post('rename.php', {
             location: iniFileName,
             newName: newNameFile

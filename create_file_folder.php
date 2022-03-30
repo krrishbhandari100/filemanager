@@ -5,6 +5,7 @@ if (!isset($_SESSION['email'])) {
 } else {
     $location = $_POST['location'];
     $type = $_POST['type'];
+    echo $location;
     if($type == 'file'){
         $myfile = fopen($location, "w") or die("Unable to open file!");
         fclose($myfile);
