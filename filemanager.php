@@ -236,7 +236,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     const fileUpload = () => {
-        console.log("File Upload called")
         let timerInterval
         Swal.fire({
             title: 'File is uploading',
