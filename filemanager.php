@@ -1,6 +1,6 @@
 <?php
 include './params.php';
-if($auth){
+if ($auth) {
     session_start();
     if (!isset($_SESSION['email'])) {
         header("Location: index.php");
@@ -47,26 +47,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </span>
             </a>
             <nav class="md:ml-auto flex flex-wrap items-center text-base justify-center">
-                <a class="mr-5 cursor-pointer">
-                    <button onclick="createFile()" class="bg-pink-500 text-white active:bg-pink-600 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150" type="button">
-                        Create File
-                    </button>
-                </a>
-                <a class="mr-5 cursor-pointer">
-                    <button onclick="createFolder()" class="bg-pink-500 text-white active:bg-pink-600 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150" type="button">
-                        Create Folder
-                    </button>
-                </a>
 
-                <a class="mr-5 cursor-pointer">
-                    <form method="post" enctype="multipart/form-data">
-                        <input id="fileupload" onchange="fileUpload()" type="file" class="h-auto w-auto mb-4" name="Uploaded[]" id="Uploaded" multiple value="File Upload">
-                        <button type="submit" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center">
-                            <span>Upload</span>
-                        </button>
-                    </form>
-                </a>
-                <a href="./logout.php" class="mr-5 cursor-pointer">Logout</a>
+                <?php
+                if (!isset($_SESSION['email'])) {
+                    echo "";
+                } else {
+                    echo "<a href='./logout.php' class='mr-5 cursor-pointer'>Logout</a>";
+                }
+                ?>
             </nav>
         </div>
     </header>
@@ -78,32 +66,57 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </form>
         </center>
     </div>
-    <div class="relative sm:rounded-lg">
-        <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                <tr>
-                    <th scope="col" class="px-6 py-3">
-                        Filename
-                    </th>
-                    <th scope="col" class="px-6 py-3">
-                        Edit
-                    </th>
-                    <th scope="col" class="px-6 py-3">
-                        Delete
-                    </th>
-                    <th scope="col" class="px-6 py-3">
-                        Rename
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php
-                for ($i = 0; $i < count($dirs); $i++) {
-                    if ($dirs[$i] == "." || $dirs[$i] == '..') {
-                        echo "";
-                    } else {
-                        if (is_dir($location . '/' . $dirs[$i])) {
-                            echo "
+    <center>
+        <div class="w-[90vw] sm:rounded-lg">
+            <div class="func flex items-center flex-wrap">
+                <div>
+                    <button onclick="createFile()" class="bg-pink-500 text-white active:bg-pink-600 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150" type="button">
+                        Create File
+                    </button>
+                </div>
+
+                <div>
+                    <button onclick="createFolder()" class="bg-pink-500 text-white active:bg-pink-600 font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150" type="button">
+                        Create Folder
+                    </button>
+                </div>
+
+                <div class="flex items-center">
+                    <form method="post" class="flex items-center" enctype="multipart/form-data">
+                        <input id="fileupload" onchange="fileUpload()" type="file" class="h-auto w-auto mb-4" name="Uploaded[]" id="Uploaded" multiple value="File Upload">
+                        <button type="submit" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center">
+                            <span>Move to Server</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+
+            <table class="relative w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                    <tr>
+                        <th scope="col" class="px-6 py-3">
+                            Filename
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            Edit
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            Delete
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            Rename
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    for ($i = 0; $i < count($dirs); $i++) {
+                        if ($dirs[$i] == "." || $dirs[$i] == '..') {
+                            echo "";
+                        } else {
+                            if (is_dir($location . '/' . $dirs[$i])) {
+                                echo "
                             <tr class='bg-white border-b dark:bg-gray-800 dark:border-gray-700'>
                             <th scope='row' class='px-6 flex items-center py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap'><img style='height: 51px;' src='https://i.pinimg.com/474x/fe/dc/ee/fedceef43b1e8c83b404245a6686bafe.jpg' />&nbsp;&nbsp;<a href='./filemanager.php?location=" . $location . '/' . $dirs[$i] . "'>" . $dirs[$i] . "</a></th>
                             <td class='px-6 py-4'>
@@ -119,8 +132,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 <a onclick='renameFile(`$dirs[$i]`)' type='button' class='focus:outline-none text-white cursor-pointer bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-2 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900'>Rename</a>
                             </td>
                             </tr>";
-                        } else {
-                            echo "
+                            } else {
+                                echo "
                             <tr class='bg-white border-b dark:bg-gray-800 dark:border-gray-700'>
                             <th scope='row' class='px-6 flex items-center py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap'><img style='height: 51px;' src='https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/File_alt_font_awesome.svg/1024px-File_alt_font_awesome.svg.png' />&nbsp;&nbsp;" . $dirs[$i] . "</th>
                             <td class='px-6 py-4'>
@@ -134,14 +147,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 <a onclick='renameFile(`$dirs[$i]`)' type='button' class='focus:outline-none text-white bg-blue-700 cursor-pointer hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-2 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900'>Rename</a>
                             </td>
                             </tr>";
+                            }
                         }
                     }
-                }
 
-                ?>
-            </tbody>
-        </table>
-    </div>
+                    ?>
+                </tbody>
+            </table>
+        </div>
+    </center>
 
 </body>
 <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
